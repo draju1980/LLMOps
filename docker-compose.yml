@@ -150,6 +150,50 @@ services:
       timeout: 5s
       retries: 5
 
+  # LLMOps Training: Complete course with all modules
+  training:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: llmops-training
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+      - /workspace/__pycache__
+    environment:
+      PYTHONUNBUFFERED: 1
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: llmops
+      POSTGRES_PASSWORD: llmops-password
+      MINIO_HOST: minio
+      MINIO_PORT: 9000
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      JAEGER_AGENT_HOST: jaeger
+      JAEGER_AGENT_PORT: 6831
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      prometheus:
+        condition: service_healthy
+      grafana:
+        condition: service_healthy
+      jaeger:
+        condition: service_healthy
+      mlflow:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+    stdin_open: true
+    tty: true
+    command: /bin/bash
+
 volumes:
   postgres_data:
   minio_data:

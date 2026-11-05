@@ -1,0 +1,17 @@
+version: '3.8'
+
+name: llmops-06-kubeflow-pipelines
+
+services:
+  # Add services specific to this module here
+  # Or reference shared infrastructure from parent docker-compose.yml
+
+  placeholder:
+    image: busybox:latest
+    command: echo "Module 06-kubeflow-pipelines services (if any)"
+    profiles:
+      - never-start
+
+networks:
+  default:
+    name: llmops-06-kubeflow-pipelines-network

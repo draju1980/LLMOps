@@ -1,0 +1,19 @@
+version: '3.8'
+
+name: llmops-module-01
+
+# Module 01 is conceptual - no Docker services required
+# This file is kept for consistency with the module structure
+
+services:
+  # Placeholder: This module runs locally (no containers needed)
+  # To verify: run `make validate` in this directory
+  placeholder:
+    image: busybox:latest
+    command: echo "Module 01 uses shared infrastructure only"
+    profiles:
+      - never-start
+
+networks:
+  default:
+    name: llmops-module-01-network

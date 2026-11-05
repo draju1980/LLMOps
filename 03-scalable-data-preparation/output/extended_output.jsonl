@@ -1,0 +1,5 @@
+{"instruction": "How do I reset my password?", "input": "", "output": "Visit account settings and click the reset button", "category": "Account", "tokens": {"input": 6, "output": 12}}
+{"instruction": "I cannot log in to my account", "input": "", "output": "Please reset your password through the login page", "category": "Account", "tokens": {"input": 7, "output": 12}}
+{"instruction": "Billing question about my subscription", "input": "", "output": "Applied the SPRING2024 discount to your account", "category": "Billing", "tokens": {"input": 9, "output": 11}}
+{"instruction": "Product feature question", "input": "", "output": "This feature works as designed per documentation", "category": "Technical", "tokens": {"input": 6, "output": 12}}
+{"instruction": "API integration help needed", "input": "", "output": "See documentation at our API reference portal", "category": "Technical", "tokens": {"input": 6, "output": 11}}

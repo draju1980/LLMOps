@@ -1,0 +1,17 @@
+version: '3.8'
+
+name: llmops-10-production-operations-observability
+
+services:
+  # Add services specific to this module here
+  # Or reference shared infrastructure from parent docker-compose.yml
+
+  placeholder:
+    image: busybox:latest
+    command: echo "Module 10-production-operations-observability services (if any)"
+    profiles:
+      - never-start
+
+networks:
+  default:
+    name: llmops-10-production-operations-observability-network

@@ -1,0 +1,17 @@
+version: '3.8'
+
+name: llmops-16-hands-on-labs
+
+services:
+  # Add services specific to this module here
+  # Or reference shared infrastructure from parent docker-compose.yml
+
+  placeholder:
+    image: busybox:latest
+    command: echo "Module 16-hands-on-labs services (if any)"
+    profiles:
+      - never-start
+
+networks:
+  default:
+    name: llmops-16-hands-on-labs-network
