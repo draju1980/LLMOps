@@ -1,0 +1,163 @@
+version: '3.8'
+
+name: llmops-course
+
+services:
+  # PostgreSQL: Metadata store for MLflow, KFP, Prompt Registry
+  postgres:
+    image: postgres:16-alpine
+    container_name: llmops-postgres
+    environment:
+      POSTGRES_USER: llmops
+      POSTGRES_PASSWORD: llmops-password
+      POSTGRES_DB: llmops_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U llmops" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MinIO: S3-compatible object storage for datasets, models, artifacts
+  minio:
+    image: minio/minio:latest
+    container_name: llmops-minio
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin-password
+    command: minio server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis: Semantic cache, session store, message broker
+  redis:
+    image: redis:7.4-alpine
+    container_name: llmops-redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Prometheus: Metrics collection and time-series DB
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    container_name: llmops-prometheus
+    volumes:
+      - ./infra/config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+    healthcheck:
+      test: [ "CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9090/-/healthy" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Grafana: Metrics visualization and dashboards
+  grafana:
+    image: grafana/grafana:11.0.0
+    container_name: llmops-grafana
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./infra/config/grafana/provisioning:/etc/grafana/provisioning:ro
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: [ "CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/api/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      - prometheus
+
+  # Jaeger: Distributed tracing
+  jaeger:
+    image: jaegertracing/all-in-one:v1.54
+    container_name: llmops-jaeger
+    environment:
+      COLLECTOR_ZIPKIN_HOST_PORT: ":9411"
+    ports:
+      - "16686:16686"  # UI
+      - "4317:4317"    # OTLP receiver (gRPC)
+      - "4318:4318"    # OTLP receiver (HTTP)
+    healthcheck:
+      test: [ "CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:16686/" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MLflow: Model registry and experiment tracking
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.14.1
+    container_name: llmops-mlflow
+    command: mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri postgresql://llmops:llmops-password@postgres:5432/mlflow_db
+    ports:
+      - "5000:5000"
+    environment:
+      MLFLOW_BACKEND_STORE_URI: postgresql://llmops:llmops-password@postgres:5432/mlflow_db
+      MLFLOW_DEFAULT_ARTIFACT_ROOT: s3://mlflow-artifacts/
+      AWS_ACCESS_KEY_ID: minioadmin
+      AWS_SECRET_ACCESS_KEY: minioadmin-password
+      MLFLOW_S3_ENDPOINT_URL: http://minio:9000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:5000/" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Qdrant: Vector database for semantic search / RAG
+  qdrant:
+    image: qdrant/qdrant:v1.8.0
+    container_name: llmops-qdrant
+    volumes:
+      - qdrant_data:/qdrant/storage
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    environment:
+      QDRANT_API_KEY: qdrant-api-key
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:6333/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  minio_data:
+  redis_data:
+  prometheus_data:
+  grafana_data:
+  qdrant_data:
+
+networks:
+  default:
+    name: llmops-network
