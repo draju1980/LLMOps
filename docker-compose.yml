@@ -141,8 +141,8 @@ services:
       test: [ "CMD-SHELL", "curl -f http://localhost:5000/health || exit 1" ]
       interval: 10s
       timeout: 10s
-      retries: 10
-      start_period: 60s
+      retries: 15
+      start_period: 90s
 
   # Qdrant: Vector database for semantic search / RAG
   qdrant:
