@@ -13,24 +13,22 @@ A comprehensive, production-grade LLMOps engineering curriculum with hands-on la
 
 ```bash
 # Clone and navigate
-git clone <this-repo>
+git clone https://github.com/draju1980/LLMOps.git
 cd LLMOps
 
 # Start shared infrastructure first
-make infra-up     # Start Postgres, MinIO, Redis, etc.
-make infra-validate # Health check
-
-# View the course structure
-tree -L 2 -I '__pycache__|*.pyc'
-
-# Run Module 1 (Introduction)
-cd 01-what-is-llmops
-make up          # Start module services
-make validate    # Verify setup
-make lab         # Run hands-on exercises
+make infra-up           # Start Postgres, MinIO, Redis, etc.
+make infra-validate     # Health check
 
 # View all available modules
 make modules-list
+
+# Run Module 1 (Introduction)
+cd 01-what-is-llmops
+make up                 # Start module services
+make validate           # Verify setup
+make lab                # Run hands-on exercises
+make down               # Stop module services
 ```
 
 ---
