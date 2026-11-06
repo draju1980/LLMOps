@@ -1,5 +1,3 @@
-# Module: 12-safety-responsible-ai
-
 .PHONY: help up down test validate reset lab clean
 
 help:
@@ -34,12 +32,16 @@ validate:
 
 lab:
 	@echo "Running hands-on exercises..."
-	python3 -m pytest exercises/ -v
-	@echo "✓ Exercises complete"
+	@if find exercises/ -name "*.py" -type f 2>/dev/null | grep -q . ; then \
+		python3 -m pytest exercises/ -v; \
+	else \
+		echo "ℹ️  Exercises not yet implemented"; \
+	fi
+	@echo "✓ Lab complete"
 
 reset:
 	@echo "Resetting 12-safety-responsible-ai..."
-	docker compose down -v
+	docker compose down -v 2>/dev/null || true
 	find . -type f -name "*.pyc" -delete
 	find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
 	@echo "✓ Reset complete"

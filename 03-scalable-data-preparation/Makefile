@@ -1,5 +1,3 @@
-# Module: 03-scalable-data-preparation
-
 .PHONY: help up down test validate reset lab clean
 
 help:
@@ -34,12 +32,19 @@ validate:
 
 lab:
 	@echo "Running hands-on exercises..."
-	python3 -m pytest exercises/ -v
-	@echo "✓ Exercises complete"
+	@if find exercises/ -name "exercise*.py" -type f 2>/dev/null | grep -q . ; then \
+		for exercise in exercises/exercise*.py; do \
+			echo "\n▶️  Running $$exercise..."; \
+			python3 "$$exercise"; \
+		done; \
+	else \
+		echo "ℹ️  Exercises not yet implemented"; \
+	fi
+	@echo "✓ Lab complete"
 
 reset:
 	@echo "Resetting 03-scalable-data-preparation..."
-	docker compose down -v
+	docker compose down -v 2>/dev/null || true
 	find . -type f -name "*.pyc" -delete
 	find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
 	@echo "✓ Reset complete"

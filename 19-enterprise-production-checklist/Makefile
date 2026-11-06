@@ -1,39 +1,50 @@
 .PHONY: help up down test validate reset lab clean
 
 help:
-	@echo "Module 19: Enterprise Production Checklist - Makefile Targets"
+	@echo "Module 19-enterprise-production-checklist - Makefile Targets"
 	@echo ""
-	@echo "  make up          Start services (conceptual module)"
+	@echo "  make up          Start services for this module"
 	@echo "  make down        Stop services"
 	@echo "  make test        Run pytest suite"
-	@echo "  make validate    Validate checklist"
-	@echo "  make lab         Run audit exercises"
-	@echo "  make reset       Hard reset"
+	@echo "  make validate    Validate learning & setup"
+	@echo "  make lab         Run hands-on exercises"
+	@echo "  make reset       Hard reset (remove volumes)"
 	@echo "  make clean       Clean cache files"
 
 up:
-	@echo "Module 19 is conceptual - no Docker services required"
-	@echo "✓ Audit environment ready"
+	@echo "Starting 19-enterprise-production-checklist..."
+	docker compose up -d
+	@echo "✓ Services started"
 
 down:
-	@echo "Module 19 environment stopped"
+	@echo "Stopping 19-enterprise-production-checklist..."
+	docker compose down
+	@echo "✓ Services stopped"
 
 test:
-	@echo "Running Module 19 tests..."
+	@echo "Running tests for 19-enterprise-production-checklist..."
 	python3 -m pytest tests/ -v --tb=short
+	@echo "✓ Tests complete"
 
 validate:
-	@echo "Validating Module 19 checklist..."
-	@echo "✓ Module 19 ready"
+	@echo "Validating 19-enterprise-production-checklist..."
+	@echo "✓ Module ready"
 
 lab:
-	@echo "Module 19: Production Readiness Audit"
-	@echo "See src/ directory for audit scripts"
+	@echo "Running hands-on exercises..."
+	@if find exercises/ -name "*.py" -type f 2>/dev/null | grep -q . ; then \
+		python3 -m pytest exercises/ -v; \
+	else \
+		echo "ℹ️  Exercises not yet implemented"; \
+	fi
+	@echo "✓ Lab complete"
 
 reset:
-	rm -rf __pycache__ .pytest_cache *.pyc
+	@echo "Resetting 19-enterprise-production-checklist..."
+	docker compose down -v 2>/dev/null || true
+	find . -type f -name "*.pyc" -delete
 	find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
-	@echo "✓ Module 19 reset complete"
+	@echo "✓ Reset complete"
 
 clean:
 	find . -type f -name "*.pyc" -delete

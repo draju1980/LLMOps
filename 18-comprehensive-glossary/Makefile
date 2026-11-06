@@ -1,39 +1,50 @@
 .PHONY: help up down test validate reset lab clean
 
 help:
-	@echo "Module 18: Comprehensive Glossary - Makefile Targets"
+	@echo "Module 18-comprehensive-glossary - Makefile Targets"
 	@echo ""
-	@echo "  make up          Start services (conceptual module)"
+	@echo "  make up          Start services for this module"
 	@echo "  make down        Stop services"
 	@echo "  make test        Run pytest suite"
-	@echo "  make validate    Validate learning"
-	@echo "  make lab         Run exercises"
-	@echo "  make reset       Hard reset"
+	@echo "  make validate    Validate learning & setup"
+	@echo "  make lab         Run hands-on exercises"
+	@echo "  make reset       Hard reset (remove volumes)"
 	@echo "  make clean       Clean cache files"
 
 up:
-	@echo "Module 18 is conceptual - no Docker services required"
-	@echo "✓ Educational environment ready"
+	@echo "Starting 18-comprehensive-glossary..."
+	docker compose up -d
+	@echo "✓ Services started"
 
 down:
-	@echo "Module 18 environment stopped"
+	@echo "Stopping 18-comprehensive-glossary..."
+	docker compose down
+	@echo "✓ Services stopped"
 
 test:
-	@echo "Running Module 18 tests..."
+	@echo "Running tests for 18-comprehensive-glossary..."
 	python3 -m pytest tests/ -v --tb=short
+	@echo "✓ Tests complete"
 
 validate:
-	@echo "Validating Module 18 learning..."
-	@echo "✓ Module 18 ready"
+	@echo "Validating 18-comprehensive-glossary..."
+	@echo "✓ Module ready"
 
 lab:
-	@echo "Module 18: Glossary Review"
-	@echo "See src/ directory for glossary content"
+	@echo "Running hands-on exercises..."
+	@if find exercises/ -name "*.py" -type f 2>/dev/null | grep -q . ; then \
+		python3 -m pytest exercises/ -v; \
+	else \
+		echo "ℹ️  Exercises not yet implemented"; \
+	fi
+	@echo "✓ Lab complete"
 
 reset:
-	rm -rf __pycache__ .pytest_cache *.pyc
+	@echo "Resetting 18-comprehensive-glossary..."
+	docker compose down -v 2>/dev/null || true
+	find . -type f -name "*.pyc" -delete
 	find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
-	@echo "✓ Module 18 reset complete"
+	@echo "✓ Reset complete"
 
 clean:
 	find . -type f -name "*.pyc" -delete
