@@ -6,9 +6,9 @@ services:
     image: postgres:17-alpine3.24
     container_name: llmops-postgres
     environment:
-      POSTGRES_USER: llmops
-      POSTGRES_PASSWORD: llmops-password
-      POSTGRES_DB: llmops_db
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./infra/scripts/init-postgres.sql:/docker-entrypoint-initdb.d/init.sql
@@ -27,9 +27,9 @@ services:
     container_name: llmops-minio
     environment:
       SERVICES: s3
-      AWS_ACCESS_KEY_ID: minioadmin
-      AWS_SECRET_ACCESS_KEY: minioadmin-password
-      AWS_DEFAULT_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
       LOCALSTACK_HOSTNAME: localhost
       DEBUG: 0
       TMPDIR: /localstack/tmp
@@ -64,7 +64,7 @@ services:
 
   # Prometheus: Metrics collection and time-series DB
   prometheus:
-    image: prom/prometheus:v3.16.0-distroless
+    image: prom/prometheus:v3.16.0
     container_name: llmops-prometheus
     volumes:
       - ./infra/config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
@@ -83,10 +83,10 @@ services:
 
   # Grafana: Metrics visualization and dashboards
   grafana:
-    image: grafana/grafana:13.2.5-distroless-slim
+    image: grafana/grafana:13.2.5
     container_name: llmops-grafana
     environment:
-      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
       GF_USERS_ALLOW_SIGN_UP: "false"
     volumes:
       - grafana_data:/var/lib/grafana
@@ -127,10 +127,10 @@ services:
     ports:
       - "15000:5000"
     environment:
-      MLFLOW_BACKEND_STORE_URI: postgresql://llmops:llmops-password@postgres:5432/mlflow_db
+      MLFLOW_BACKEND_STORE_URI: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/mlflow_db
       MLFLOW_DEFAULT_ARTIFACT_ROOT: s3://mlflow-artifacts/
-      AWS_ACCESS_KEY_ID: minioadmin
-      AWS_SECRET_ACCESS_KEY: minioadmin-password
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
       MLFLOW_S3_ENDPOINT_URL: http://minio:4566
     depends_on:
       postgres:
