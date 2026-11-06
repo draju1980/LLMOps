@@ -193,15 +193,16 @@ def print_assessment(assessment: Dict[str, PillarAssessment]):
     print("\n" + "=" * 80)
 
     # Print all assessments
-    for pillar_key, assessment in assessment.items():
-        print(assessment)
+    assessments_dict = assessment
+    for pillar_key, pillar_assessment in assessments_dict.items():
+        print(pillar_assessment)
 
     # Calculate scores
-    total = len(assessment)
-    fully_implemented = sum(1 for a in assessment.values() if a.status == "Yes")
-    partially_implemented = sum(1 for a in assessment.values() if a.status == "Partial")
-    not_implemented = sum(1 for a in assessment.values() if a.status == "No")
-    production_grade = sum(1 for a in assessment.values() if a.is_production_grade)
+    total = len(assessments_dict)
+    fully_implemented = sum(1 for a in assessments_dict.values() if a.status == "Yes")
+    partially_implemented = sum(1 for a in assessments_dict.values() if a.status == "Partial")
+    not_implemented = sum(1 for a in assessments_dict.values() if a.status == "No")
+    production_grade = sum(1 for a in assessments_dict.values() if a.is_production_grade)
 
     print("\n" + "=" * 80)
     print("SUMMARY SCORECARD")
