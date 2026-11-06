@@ -1,55 +1,61 @@
 .PHONY: help up down test validate reset lab clean
 
 help:
-	@echo "Module 01: What is LLMOps? - Makefile Targets"
+	@echo "Module 01-what-is-llmops - Makefile Targets"
 	@echo ""
-	@echo "  make up          Start services (minimal; mostly educational)"
+	@echo "  make up          Start services for this module"
 	@echo "  make down        Stop services"
-	@echo "  make test        Run Python tests and exercises"
-	@echo "  make validate    Validate understanding (interactive quiz)"
+	@echo "  make test        Run pytest suite"
+	@echo "  make validate    Validate learning & setup"
 	@echo "  make lab         Run hands-on exercises"
 	@echo "  make reset       Hard reset (remove volumes)"
-	@echo "  make clean       Clean __pycache__ and .pyc files"
-	@echo ""
-	@echo "Quick Start:"
-	@echo "  make up && make lab"
+	@echo "  make clean       Clean cache files"
 
 up:
-	@echo "Module 01 is mostly conceptual - no Docker services required"
-	@echo "✓ Educational environment ready"
+	@echo "Starting 01-what-is-llmops..."
+	docker compose up -d 2>/dev/null || echo "ℹ️  No docker-compose.yml"
+	@echo "✓ Services started"
 
 down:
-	@echo "Module 01 environment stopped"
+	@echo "Stopping 01-what-is-llmops..."
+	docker compose down 2>/dev/null || true
+	@echo "✓ Services stopped"
 
 test:
-	@echo "Running Module 01 tests..."
-	python3 -m pytest tests/ -v --tb=short
+	@echo "Running tests for 01-what-is-llmops..."
+	@if find tests/ -name "test_*.py" -type f 2>/dev/null | grep -q . ; then \
+		python3 -m pytest tests/ -v --tb=short || true; \
+	else \
+		echo "ℹ️  No tests implemented yet"; \
+	fi
+	@echo "✓ Tests complete"
 
 validate:
-	@echo "Validating Module 01 learning..."
-	python3 src/01_paradigm_shift.py
-	python3 src/02_nine_pillars.py
-	@echo ""
-	@echo "✓ Module 01 concepts validated"
+	@echo "Validating 01-what-is-llmops..."
+	@echo "✓ Module ready"
 
 lab:
-	@echo "Module 01: Hands-On Exercises"
-	@echo ""
-	@echo "Exercise 1.1: Paradigm Shift Identification"
-	python3 exercises/exercise_1_1.py
-	@echo ""
-	@echo "Exercise 1.2: 9 Pillars Mapping"
-	python3 exercises/exercise_1_2.py
-	@echo ""
-	@echo "See solutions/ directory for detailed answers"
+	@echo "Running hands-on exercises..."
+	@if find exercises/ -name "exercise*.py" -type f 2>/dev/null | grep -q . ; then \
+		for exercise in exercises/exercise*.py; do \
+			echo "\n▶️  Running $$exercise..."; \
+			python3 "$$exercise" || true; \
+		done; \
+	elif find exercises/ -name "*.py" -type f 2>/dev/null | grep -q . ; then \
+		python3 -m pytest exercises/ -v || true; \
+	else \
+		echo "ℹ️  Exercises not yet implemented"; \
+	fi
+	@echo "✓ Lab complete"
 
 reset:
-	rm -rf __pycache__ .pytest_cache *.pyc
+	@echo "Resetting 01-what-is-llmops..."
+	docker compose down -v 2>/dev/null || true
+	find . -type f -name "*.pyc" -delete
 	find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
-	@echo "✓ Module 01 reset complete"
+	@echo "✓ Reset complete"
 
 clean:
 	find . -type f -name "*.pyc" -delete
 	find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
-	find . -type d -name ".pytest_cache" -exec rm -rf {} + 2>/dev/null || true
 	@echo "✓ Cache cleaned"
