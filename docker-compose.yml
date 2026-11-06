@@ -29,9 +29,10 @@ services:
       AWS_SECRET_ACCESS_KEY: minioadmin-password
       AWS_DEFAULT_REGION: us-east-1
       LOCALSTACK_HOSTNAME: localhost
-      DEBUG: 1
+      DEBUG: 0
+      TMPDIR: /localstack/tmp
     volumes:
-      - minio_data:/tmp/localstack
+      - minio_data:/localstack/tmp
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - "4566:4566"
