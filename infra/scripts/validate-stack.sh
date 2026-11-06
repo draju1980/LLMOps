@@ -34,15 +34,15 @@ check_service() {
 
 # PostgreSQL
 check_service "PostgreSQL" "postgres" "5432" \
-    "pg_isready -h localhost -p 5432 -U llmops"
+    "docker exec llmops-postgres pg_isready -U llmops"
 
-# MinIO
-check_service "MinIO (S3)" "minio" "9000" \
-    "curl -s http://localhost:9000/minio/health/live"
+# MinIO (LocalStack S3)
+check_service "MinIO (S3)" "minio" "4566" \
+    "curl -s http://localhost:4566/health | grep -q running"
 
 # Redis
 check_service "Redis" "redis" "6379" \
-    "redis-cli -h localhost ping | grep -q PONG"
+    "docker exec llmops-redis redis-cli ping | grep -q PONG"
 
 # Prometheus
 check_service "Prometheus" "prometheus" "9090" \
@@ -75,7 +75,7 @@ if [ $FAILURES -eq 0 ]; then
     echo "  Grafana:     http://localhost:3000 (admin/admin)"
     echo "  Jaeger UI:   http://localhost:16686"
     echo "  MLflow:      http://localhost:5000"
-    echo "  MinIO UI:    http://localhost:9001 (minioadmin/minioadmin-password)"
+    echo "  LocalStack:  http://localhost:4566 (S3 endpoint)"
     echo "  Qdrant:      http://localhost:6333"
     echo ""
     exit 0
