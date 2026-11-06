@@ -3,7 +3,7 @@ name: llmops-course
 services:
   # PostgreSQL: Metadata store for MLflow, KFP, Prompt Registry
   postgres:
-    image: postgres:16.4-alpine
+    image: postgres:17-alpine3.24
     container_name: llmops-postgres
     environment:
       POSTGRES_USER: llmops
@@ -21,7 +21,7 @@ services:
 
   # LocalStack: S3-compatible object storage (replacement for MinIO)
   minio:
-    image: localstack/localstack:3.7.1
+    image: localstack/localstack:4.0.3
     container_name: llmops-minio
     environment:
       SERVICES: s3
@@ -45,7 +45,7 @@ services:
 
   # Redis: Semantic cache, session store, message broker
   redis:
-    image: redis:7.4.0-alpine
+    image: redis:8.8.4-alpine3.23
     container_name: llmops-redis
     command: redis-server --appendonly yes
     volumes:
@@ -60,7 +60,7 @@ services:
 
   # Prometheus: Metrics collection and time-series DB
   prometheus:
-    image: prom/prometheus:v2.54.1
+    image: prom/prometheus:v3.16.0-distroless
     container_name: llmops-prometheus
     volumes:
       - ./infra/config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
@@ -78,7 +78,7 @@ services:
 
   # Grafana: Metrics visualization and dashboards
   grafana:
-    image: grafana/grafana:11.2.3
+    image: grafana/grafana:13.2.5-distroless-slim
     container_name: llmops-grafana
     environment:
       GF_SECURITY_ADMIN_PASSWORD: admin
@@ -114,7 +114,7 @@ services:
 
   # MLflow: Model registry and experiment tracking
   mlflow:
-    image: ghcr.io/mlflow/mlflow:v2.16.0
+    image: ghcr.io/mlflow/mlflow:v3.18.0-full
     container_name: llmops-mlflow
     command: mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri postgresql://llmops:llmops-password@postgres:5432/mlflow_db
     ports:
@@ -138,7 +138,7 @@ services:
 
   # Qdrant: Vector database for semantic search / RAG
   qdrant:
-    image: qdrant/qdrant:v1.10.1
+    image: qdrant/qdrant:v1.20.0
     container_name: llmops-qdrant
     volumes:
       - qdrant_data:/qdrant/storage
