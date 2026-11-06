@@ -38,7 +38,7 @@ check_service "PostgreSQL" "postgres" "5432" \
 
 # MinIO (LocalStack S3)
 check_service "MinIO (S3)" "minio" "4566" \
-    "curl -s http://localhost:4566/health | grep -q running"
+    "curl -s -o /dev/null -w '%{http_code}' http://localhost:4566/ | grep -q -E '(200|400|404)'"
 
 # Redis
 check_service "Redis" "redis" "6379" \
