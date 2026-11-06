@@ -25,7 +25,7 @@ down:
 
 test:
 	@echo "Running tests for 02-mlops-to-llmops-framework..."
-	python -m pytest tests/ -v --tb=short
+	python3 -m pytest tests/ -v --tb=short
 	@echo "✓ Tests complete"
 
 validate:
@@ -34,7 +34,7 @@ validate:
 
 lab:
 	@echo "Running hands-on exercises..."
-	python -m pytest exercises/ -v
+	python3 -m pytest exercises/ -v
 	@echo "✓ Exercises complete"
 
 reset:
