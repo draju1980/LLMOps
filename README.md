@@ -16,9 +16,13 @@ A comprehensive, production-grade LLMOps engineering curriculum with hands-on la
 git clone https://github.com/draju1980/LLMOps.git
 cd LLMOps
 
+# (Optional) Customize infrastructure configuration
+# Copy .env.example to .env and customize passwords if desired
+cp .env.example .env  # Edit .env for custom passwords/settings
+
 # Start shared infrastructure first
-make infra-up           # Start Postgres, MinIO, Redis, etc.
-make infra-validate     # Health check
+make infra-up           # Start Postgres, LocalStack, Redis, etc.
+make infra-validate     # Health check all services
 
 # View all available modules
 make modules-list
@@ -30,6 +34,30 @@ make validate           # Verify setup
 make lab                # Run hands-on exercises
 make down               # Stop module services
 ```
+
+## Configuration
+
+### Environment Variables (.env)
+
+All infrastructure passwords and settings are configured via `.env`:
+
+```bash
+# Copy the example to create your own .env
+cp .env.example .env
+
+# Edit .env to customize (optional):
+POSTGRES_PASSWORD=your-secure-password
+AWS_ACCESS_KEY_ID=your-key-id
+GF_SECURITY_ADMIN_PASSWORD=your-grafana-password
+# ... etc
+```
+
+The `.env` file is **not** committed to git and is safe for local customization.
+
+**Default credentials** (from `.env.example`):
+- PostgreSQL: `llmops` / `llmops-password`
+- LocalStack: `minioadmin` / `minioadmin-password`
+- Grafana: `admin` / `admin`
 
 ---
 

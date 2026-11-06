@@ -156,7 +156,7 @@ services:
     environment:
       QDRANT_API_KEY: qdrant-api-key
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:6333/health" ]
+      test: [ "CMD-SHELL", "curl -f http://localhost:6333/ || exit 1" ]
       interval: 10s
       timeout: 10s
       retries: 10
