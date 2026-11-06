@@ -16,18 +16,50 @@ A comprehensive, production-grade LLMOps engineering curriculum with hands-on la
 git clone <this-repo>
 cd LLMOps
 
+# Start shared infrastructure first
+make infra-up     # Start Postgres, MinIO, Redis, etc.
+make infra-validate # Health check
+
 # View the course structure
 tree -L 2 -I '__pycache__|*.pyc'
 
 # Run Module 1 (Introduction)
 cd 01-what-is-llmops
-make up          # Start all services
+make up          # Start module services
 make validate    # Verify setup
 make lab         # Run hands-on exercises
 
 # View all available modules
-ls -d [0-9][0-9]-*/
+make modules-list
 ```
+
+---
+
+## Command Reference
+
+There are two levels of commands in this course:
+
+### Root-Level Infrastructure Commands (from `/LLMOps` directory)
+```bash
+make infra-up        # Start all shared services (required first)
+make infra-down      # Stop all shared services
+make infra-validate  # Health check all services
+make infra-reset     # Hard reset (stop + remove volumes)
+make infra-logs      # Stream logs from all services
+make modules-list    # List all available modules
+```
+
+### Module-Level Commands (from `/LLMOps/<module>` directory)
+```bash
+make up          # Start module services
+make down        # Stop module services
+make validate    # Health checks + tests
+make test        # Run pytest suite
+make lab         # Run hands-on exercises (if available)
+make reset       # Hard reset module (stop + remove volumes)
+```
+
+**Important:** Always run `make infra-up` from the root directory BEFORE entering any module!
 
 ---
 
@@ -379,34 +411,51 @@ This pulls `vllm/vllm:v0.5.0-cu121` and enables CUDA-based quantization and infe
 ### 1. Clone and Setup
 
 ```bash
-git clone https://github.com/your-org/llmops-course.git
+git clone https://github.com/draju1980/LLMOps.git
 cd LLMOps
-make infra-up       # Start shared infrastructure (Postgres, MinIO, Redis, etc.)
+```
+
+### 2. Start Shared Infrastructure
+
+All modules depend on shared services (Postgres, MinIO, Redis, etc.):
+
+```bash
+make infra-up       # Start shared infrastructure
 make infra-validate # Health checks
 ```
 
-### 2. Run Your First Module
+### 3. Run Your First Module
 
 ```bash
 # Module 1: Introduction to LLMOps
 cd 01-what-is-llmops
-make up             # Start services (lightweight)
+make up             # Start module services
 make validate       # Verify container health
 make lab            # Run interactive exercises
-make down           # Cleanup
+make down           # Cleanup module services
 ```
 
-### 3. Follow the Learning Path
+### 4. Follow the Learning Path
 
-Each module is self-contained:
+Each module is self-contained. After starting infrastructure:
+
 ```bash
 cd <module-folder>
 make up          # Start services defined in docker-compose.yml
-make lab         # Run hands-on exercises
 make validate    # Verify correctness
+make lab         # Run hands-on exercises
+make test        # Run automated tests
 make down        # Cleanup containers
-make reset       # Clean volumes & start fresh
+make reset       # Clean volumes & start fresh (optional)
 ```
+
+**Module Commands Summary:**
+- `make up` — Start module services
+- `make down` — Stop module services  
+- `make validate` — Health checks + tests
+- `make test` — Run pytest suite
+- `make lab` — Run hands-on exercises (when available)
+- `make reset` — Hard reset (stop + remove volumes)
 
 ---
 
