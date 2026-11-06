@@ -23,12 +23,12 @@ down:
 
 test:
 	@echo "Running Module 01 tests..."
-	python -m pytest tests/ -v --tb=short
+	python3 -m pytest tests/ -v --tb=short
 
 validate:
 	@echo "Validating Module 01 learning..."
-	python src/01_paradigm_shift.py
-	python src/02_nine_pillars.py
+	python3 src/01_paradigm_shift.py
+	python3 src/02_nine_pillars.py
 	@echo ""
 	@echo "✓ Module 01 concepts validated"
 
@@ -36,10 +36,10 @@ lab:
 	@echo "Module 01: Hands-On Exercises"
 	@echo ""
 	@echo "Exercise 1.1: Paradigm Shift Identification"
-	python exercises/exercise_1_1.py
+	python3 exercises/exercise_1_1.py
 	@echo ""
 	@echo "Exercise 1.2: 9 Pillars Mapping"
-	python exercises/exercise_1_2.py
+	python3 exercises/exercise_1_2.py
 	@echo ""
 	@echo "See solutions/ directory for detailed answers"
 

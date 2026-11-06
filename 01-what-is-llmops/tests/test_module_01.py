@@ -24,7 +24,7 @@ class TestParadigmShift:
         assert True, "LLMOps systems are non-deterministic (probabilistic sampling)"
 
 
-class TestTesting Paradigm:
+class TestTestingParadigm:
     """Test understanding of testing evolution"""
 
     def test_devops_testing_uses_assertions(self):
